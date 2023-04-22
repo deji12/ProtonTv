@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/cloudinary-video-player@1.9.5/dist/cld-video-player.min.css" rel="stylesheet">
+</head>
+<body>
+    <script src="https://unpkg.com/cloudinary-video-player@1.9.5/dist/cld-video-player.min.js" 
+    type="text/javascript"></script>
+    <div style="max-width: 800px">
+        <video id="doc-player"  controls  muted  class="cld-video-player cld-fluid"></video>
+    </div>
+    <script>
+        var demoplayer = cloudinary.videoPlayer('doc-player', { cloud_name: 'demo' });
+        demoplayer.source('{{movie.video}}')
+    </script>
+</body>
+</html>

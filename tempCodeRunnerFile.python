@@ -1,0 +1,23 @@
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+
+# Load in the data
+df = pd.read_csv("bitcoin_data.csv")
+
+# Split the data into features and target
+X = df[["address"]]
+y = df["private_key"]
+
+# Train the model
+model = RandomForestRegressor()
+model.fit(X, y)
+
+# Predict the private key for a given address
+def predict_private_key(address):
+prediction = model.predict([[address]])
+return prediction[0]
+
+# Test the model with a sample address
+# sample_address = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
+# predicted_private_key = predict_private_key(sample_address)
+# print("Predicted private key for address {}: {}".format(sample_address, predicted_private_key))

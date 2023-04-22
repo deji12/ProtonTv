@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'movieapp/nav.html' %}
+<body class="body">
+	
+<!-- header -->
+
+<!-- end header -->
+
+<!-- page title -->
+<section class="section section--first section--bg" data-bg="https://res.cloudinary.com/dxojb4izx/image/upload/v1650191738/movie/static/img/home/section_odahuy.jpg">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="section__wrap">
+					<!-- section title -->
+					<h1 class="section__title">FAQ</h1>
+					<!-- end section title -->
+
+					<!-- breadcrumb -->
+					<ul class="breadcrumb">
+						<li class="breadcrumb__item"><a href="{% url 'home' %}">Home</a></li>
+						<li class="breadcrumb__item breadcrumb__item--active">FAQ</li>
+					</ul>
+					<!-- end breadcrumb -->
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- end page title -->
+
+<!-- faq -->
+<section class="section">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 col-md-6">
+				<div class="faq">
+					<h3 class="faq__title">Why is a Video is not loading?</h3>
+					<p class="faq__text">This might be due to either bad network or too much traffic on the website. Try connecting to a better internet provider and try again.</p>
+				</div>
+
+				<div class="faq">
+					<h3 class="faq__title">Why isn't there a HD version of this video?</h3>
+					<p class="faq__text">This is a website built for THE PROTON GUY's portfolio. In order to host hd quality videos, it requires resources He does not currently have. Look at the bright side, the current video quality isn't too bad :)</p>
+				</div>
+
+				<div class="faq">
+					<h3 class="faq__title">Why is the sound distorted?</h3>
+					<p class="faq__text">That might be you phone's speaker :)</p>
+				</div>
+
+				<div class="faq">
+					<h3 class="faq__title">Why is the Video stuttering, buffering or randomly stopping?</h3>
+					<p class="faq__text">This is probably due to bad network. Connect to a better internet provider and try again.</p>
+				</div>
+
+				<!-- <div class="faq">
+					<h3 class="faq__title">When I change the quality of a video, nothing happens.</h3>
+					<p class="faq__text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.</p>
+				</div> -->
+			</div>
+
+			<div class="col-12 col-md-6">
+				<!-- <div class="faq">
+					<h3 class="faq__title">Why isn't the video starting at the beginning?</h3>
+					<p class="faq__text">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+				</div> -->
+
+				<div class="faq">
+					<h3 class="faq__title">How do I make the Video go Fullscreen?</h3>
+					<p class="faq__text">Just at the bottom right of the video player, theres an incon that signifies screen expansion. When clicked, it opens fullscreen mode.</p>
+				</div>
+
+				<div class="faq">
+					<h3 class="faq__title">What Browsers are supported?</h3>
+					<p class="faq__text">ProtonTv is supported by all current browsers.</p>
+				</div>
+
+				<div class="faq">
+					<!-- <h3 class="faq__title">How do you handle my privacy?</h3>
+					<p class="faq__text"></p> -->
+				</div>
+
+				<div class="faq">
+					<h3 class="faq__title">How can I contact you?</h3>
+					<p class="faq__text">You can contact me via email at theprotonguy@yahoo.com or reach out to me on instagram at the_proton_guy</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- end faq -->
+
+<!-- footer -->
+{% include 'movieapp/footer.html' %}
+<!-- end footer -->
+
+<!-- JS -->
+
+</body>
+</html>
