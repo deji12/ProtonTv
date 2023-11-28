@@ -1,5 +1,3 @@
-from audioop import add
-from email.policy import default
 from django.db import models
 from django.contrib.auth.models import User
 from SeriesApp.models import series
@@ -22,8 +20,7 @@ class movie(models.Model):
     age = models.CharField(default=13, max_length=20)
     category = models.CharField(default='cartoon', max_length=200)
     premier = models.BooleanField(default=False)
-    genre1 = models.ForeignKey(Category, related_name='category1', on_delete=models.CASCADE, null=True, blank=True)
-    genre2 = models.ForeignKey(Category, related_name='category2', on_delete=models.CASCADE, null=True, blank=True)
+    genre = models.ManyToManyField(Category, related_name='category', null=True, blank=True)
     rating = models.CharField(max_length=100)
     year = models.CharField(max_length=100)
     year_range = models.CharField(max_length=200, null=True, blank=True)
@@ -37,6 +34,18 @@ class movie(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def return_movie_comments(self):
+
+        return comment.objects.filter(movie=self).order_by('-date')
+    
+    def return_movie_reviews(self):
+
+        return reviewss.objects.filter(movie=self).order_by('-date')
+    
+    def return_movie_pictures(self):
+
+        return photos.objects.filter(movie_name=self)
 
 class comment(models.Model):
     movie = models.ForeignKey(movie, related_name='movie_comment', on_delete=models.CASCADE)
@@ -57,10 +66,6 @@ class reviewss(models.Model):
 
     def __str__(self):
         return str(self.movie)
-
-# series
-
-
 
 class photos(models.Model):
     series_name = models.ForeignKey(series, on_delete=models.CASCADE, null=True, blank=True)

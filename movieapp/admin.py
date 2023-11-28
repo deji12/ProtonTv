@@ -3,7 +3,7 @@ from . import models
 from import_export.admin import ImportExportModelAdmin
 
 class MovieAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ['name', 'category', 'genre1', 'genre2', 'duration', 'watch_hours', 'draft', 'new']
+    list_display = ['name', 'category', 'duration', 'watch_hours', 'draft', 'new']
 admin.site.register(models.movie, MovieAdmin)
 
 class CommentAdmin(ImportExportModelAdmin, admin.ModelAdmin):

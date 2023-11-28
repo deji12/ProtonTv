@@ -49,11 +49,18 @@
 						</div>
 
 						<ul class="card__meta">
-							<li><span>Genre:</span> <a href="#">{{movie.genre1}}</a>
-							<a href="#">{{movie.genre2}}</a></li>
+							<li>
+								<span>Genre:</span> 
+								{% for i in movie.genre.all %}
+									<a href="#">{{i}}</a>
+								{% endfor %}
+							</li>
 							<li><span>Release year:</span> {{movie.year}}</li>
 							<li><span>Running time:</span> {{movie.duration}}</li>
 							<li><span>Country:</span> <a href="#">{{movie.country}}</a> </li>
+							{% if request.user.is_authenticated %}
+								<a href="{% url 'create-watch-party' movie.id %}">Create a watch party</a>
+							{% endif %}
 						</ul>
 
 						<div class="card__description card__description--details">
@@ -153,7 +160,7 @@
 							<div class="col-12">
 								<div class="comments">
 									<ul class="comments__list">
-										{% for i in coms %}
+										{% for i in movie.return_movie_comments %}
 											<li class="comments__item">
 												<div class="comments__autor">
 													<img class="comments__avatar" src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650184287/movie/static/img/user_bndbl5.svg" alt="">
@@ -275,7 +282,7 @@
 							<div class="col-12">
 								<div class="reviews">
 									<ul class="reviews__list">
-										{% for j in revs %}
+										{% for j in movie.return_movie_reviews %}
 											<li class="reviews__item">
 												<div class="reviews__autor">
 													<img class="reviews__avatar" src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650184287/movie/static/img/user_bndbl5.svg" alt="">
@@ -333,7 +340,7 @@
 						<div class="gallery" itemscope="">
 							<div class="row row--grid">
 								<!-- gallery item -->
-								{% for i in pics %}
+								{% for i in movie.return_movie_pictures %}
 								<figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope="">
 									<a href="{{i.pic.url}}" itemprop="contentUrl" data-size="1920x1280">
 										<img src="{{i.pic.url}}" itemprop="thumbnail" alt="Image description">
@@ -351,7 +358,6 @@
 				<!-- end content tabs -->
 			</div>
 
-			<!-- sidebar -->
 			<div class="col-12 col-lg-4 col-xl-4">
 				<div class="row row--grid">
 					<!-- section title -->
@@ -361,9 +367,9 @@
 					<!-- end section title -->
 
 					<!-- card -->
-					{% for i in dis %}
+					{% for i in related_movies %}
 						{% if i.draft != True %}
-							{% if i.name != movie.name %}
+							
 							<div class="col-6 col-sm-4 col-lg-6">
 								<div class="card">
 									<a href="{% url 'detail' i.name %}" class="card__cover">
@@ -382,84 +388,10 @@
 									</div>
 								</div>
 							</div>
-							{% endif %}
+							
 						{% endif %}
 					{% endfor %}
 
-					{% for i in dis2 %}
-						{% if i.draft != True %}
-							{% if i.name != movie.name %}
-							<div class="col-6 col-sm-4 col-lg-6">
-								<div class="card">
-									<a href="{% url 'detail' i.name %}" class="card__cover">
-										<img src="{{i.thumbnail.url}}" alt="">
-										<span class="card__play">
-											<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-										</span>
-									</a>
-									<div class="card__content">
-										<h3 class="card__title"><a href="#">{{i.name}}</a></h3>
-										<span class="card__category">
-											<a href="#">{{i.genre1}}</a>
-											<a href="#">{{i.genre2}}</a>
-										</span>
-										<span class="card__rate">{{i.rating}}</span>
-									</div>
-								</div>
-							</div>
-							{% endif %}
-						{% endif %}
-					{% endfor %}
-
-					{% for i in dis3 %}
-						{% if i.draft != True %}
-							{% if i.name != movie.name %}
-							<div class="col-6 col-sm-4 col-lg-6">
-								<div class="card">
-									<a href="{% url 'detail' i.name %}" class="card__cover">
-										<img src="{{i.thumbnail.url}}" alt="">
-										<span class="card__play">
-											<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-										</span>
-									</a>
-									<div class="card__content">
-										<h3 class="card__title"><a href="#">{{i.name}}</a></h3>
-										<span class="card__category">
-											<a href="#">{{i.genre1}}</a>
-											<a href="#">{{i.genre2}}</a>
-										</span>
-										<span class="card__rate">{{i.rating}}</span>
-									</div>
-								</div>
-							</div>
-							{% endif %}
-						{% endif %}
-					{% endfor %}
-
-					{% for i in dis4 %}
-						{% if i.draft != True %}
-							{% if i.name != movie.name %}
-							<div class="col-6 col-sm-4 col-lg-6">
-								<div class="card">
-									<a href="{% url 'detail' i.name %}" class="card__cover">
-										<img src="{{i.thumbnail.url}}" alt="">
-										<span class="card__play">
-											<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-										</span>
-									</a>
-									<div class="card__content">
-										<h3 class="card__title"><a href="#">{{i.name}}</a></h3>
-										<span class="card__category">
-											<a href="#">{{i.genre1}}</a>
-											<a href="#">{{i.genre2}}</a>
-										</span>
-										<span class="card__rate">{{i.rating}}</span>
-									</div>
-								</div>
-							</div>
-							{% endif %}
-						{% endif %}
-					{% endfor %}
 					<!-- end card -->
 
 				</div>

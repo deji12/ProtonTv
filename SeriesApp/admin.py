@@ -3,7 +3,7 @@ from . import models
 from import_export.admin import ImportExportModelAdmin
 
 class SeriesAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ['name', 'genre1', 'genre2', 'rating', 'year', 'country', 'draft']
+    list_display = ['name', 'rating', 'year', 'country', 'draft']
 
 admin.site.register(models.series, SeriesAdmin)
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Streaming {{se.season_val}} Episode {{se.episode_num}}</title>
+<title>Streaming {{episode.season_val}} Episode {{episode.episode_num}}</title>
 </head>
 <body class="body">
 	
@@ -20,7 +20,7 @@
 		<div class="row">
 			<!-- title -->
 			<div class="col-12">
-				<h1 class="details__title">{{se.season_val}} Episode {{se.episode_num}}</h1>
+				<h1 class="details__title">{{episode.season_val}} Episode {{episode.episode_num}}</h1>
 			</div>
 			<!-- end title -->
 
@@ -45,10 +45,12 @@
 						</div>
 
 						<ul class="card__meta">
-							<li><span>Genre:</span> <a href="#">{{series.genre1}}</a>
-							<a href="#">{{series.genre2}}</a></li>
+							<li><span>Genre:</span> 
+							{% for j in series.genre.all %}
+								<a href="#">{{j}}</a>
+							{% endfor %}</li>
 							<li><span>Release year:</span> {{series.year}}</li>
-							<li><span>Running time:</span> {{se.duration}}</li>
+							<li><span>Running time:</span> {{episode.duration}}</li>
 							<li><span>Country:</span> <a href="#">{{series.country}}</a> </li>
 						</ul>
 
@@ -68,12 +70,12 @@
 					<!-- <source src="../../../static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" type="video/mp4" size="576">
 					<source src="../../../static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4" type="video/mp4" size="720">
 					<source src="../../../static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4" type="video/mp4" size="1080"> -->
-					<source src="{{se.video}}" type="video/mp4" size="1080">
+					<source src="{{episode.video}}" type="video/mp4" size="1080">
 
 					<!-- Caption files -->
-					{% if se.sub_title_file %}
-					<track kind="captions" label="{{se.sub_title_lang}}" srclang="{{se.scrlang}}" src="{{se.sub_title_file}}" default="">
-					<track kind="captions" label="{{se.sub_title_lang2}}" srclang="{{se.scrlang2}}" src="{{se.sub_title_file2}}" default="">
+					{% if episode.sub_title_file %}
+					<track kind="captions" label="{{episode.sub_title_lang}}" srclang="{{episode.scrlang}}" src="{{episode.sub_title_file}}" default="">
+					<track kind="captions" label="{{episode.sub_title_lang2}}" srclang="{{episode.scrlang2}}" src="{{episode.sub_title_file2}}" default="">
 					<!-- <track kind="captions" label="Français" srclang="fr" src="../../../static/demo/View_From_A_Blue_Moon_Trailer-HD.fr.vtt"> -->
 					{% endif %}
 					<!-- Fallback for browsers that don't support the <video> element -->
@@ -90,7 +92,7 @@
 						<div class="card-header" id="{{i.heading}}">
 							<button type="button" data-toggle="collapse" data-target="#{{i.collapse}}" aria-expanded="true" aria-controls="{{i.collapse}}">
 								<span>Season: {{i.season_num}}</span>
-								<span>{{epi}} Total Episodes of {{series.name}}</span>
+								<span>{{number_of_episodes}} Total Episodes of {{series.name}}</span>
 							</button>
 						</div>
 
@@ -381,7 +383,7 @@
 							<div class="col-12">
 								<div class="comments">
 									<ul class="comments__list">
-                                        {% for i in coms %}
+                                        {% for i in comments %}
 										<li class="comments__item">
 											<div class="comments__autor">
 												<img class="comments__avatar" src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650184287/movie/static/img/user_bndbl5.svg" alt="">
@@ -502,7 +504,7 @@
 							<div class="col-12">
 								<div class="reviews">
 									<ul class="reviews__list">
-                                        {% for i in revs %}
+                                        {% for i in reviews %}
 										<li class="reviews__item">
 											<div class="reviews__autor">
 												<img class="reviews__avatar" src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650184287/movie/static/img/user_bndbl5.svg" alt="">
@@ -565,7 +567,7 @@
 						<div class="gallery" itemscope="">
 							<div class="row row--grid">
 								<!-- gallery item -->
-								{% for i in pic %}
+								{% for i in series.get_series_images %}
 								<figure class="col-12 col-sm-6 col-xl-4" itemprop="associatedMedia" itemscope="">
 									<a href="{{i.pic.url}}" itemprop="contentUrl" data-size="1920x1280">
 										<img src="{{i.pic.url}}" itemprop="thumbnail" alt="Image description">
@@ -592,82 +594,7 @@
 					<!-- end section title -->
 
 					<!-- card -->
-                    {% for j in dis %}
-                        {% if j.draft != True %}
-						{% if j.name != series.name %}
-                            <div class="col-6 col-sm-4 col-lg-6">
-                                <div class="card">
-                                    <a href="{% url 'series-detail' j.name %}" class="card__cover">
-                                        <img src="{{j.thumbnail.url}}" alt="">
-                                        <span class="card__play">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-                                        </span>
-                                    </a>
-                                    <div class="card__content">
-                                        <h3 class="card__title"><a href="#">{{j.name}}</a></h3>
-                                        <span class="card__category">
-                                            <a href="#">{{j.genre1}}</a>
-                                            <a href="#">{{j.genre2}}</a>
-                                        </span>
-                                        <span class="card__rate">{{j.rating}}</span>
-                                    </div>
-                                </div>
-                            </div>
-						{% endif %}
-                        {% endif %}
-                    {% endfor %}
-
-					{% for j in dis2 %}
-                        {% if j.draft != True %}
-						{% if j.name != series.name %}
-                            <div class="col-6 col-sm-4 col-lg-6">
-                                <div class="card">
-                                    <a href="{% url 'series-detail' j.name %}" class="card__cover">
-                                        <img src="{{j.thumbnail.url}}" alt="">
-                                        <span class="card__play">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-                                        </span>
-                                    </a>
-                                    <div class="card__content">
-                                        <h3 class="card__title"><a href="#">{{j.name}}</a></h3>
-                                        <span class="card__category">
-                                            <a href="#">{{j.genre1}}</a>
-                                            <a href="#">{{j.genre2}}</a>
-                                        </span>
-                                        <span class="card__rate">{{j.rating}}</span>
-                                    </div>
-                                </div>
-                            </div>
-						{% endif %}
-                        {% endif %}
-                    {% endfor %}
-
-					{% for j in dis3 %}
-                        {% if j.draft != True %}
-						{% if j.name != series.name %}
-                            <div class="col-6 col-sm-4 col-lg-6">
-                                <div class="card">
-                                    <a href="{% url 'series-detail' j.name %}" class="card__cover">
-                                        <img src="{{j.thumbnail.url}}" alt="">
-                                        <span class="card__play">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"></path></svg>
-                                        </span>
-                                    </a>
-                                    <div class="card__content">
-                                        <h3 class="card__title"><a href="#">{{j.name}}</a></h3>
-                                        <span class="card__category">
-                                            <a href="#">{{j.genre1}}</a>
-                                            <a href="#">{{j.genre2}}</a>
-                                        </span>
-                                        <span class="card__rate">{{j.rating}}</span>
-                                    </div>
-                                </div>
-                            </div>
-						{% endif %}
-                        {% endif %}
-                    {% endfor %}
-
-					{% for j in dis4 %}
+                    {% for j in related_series %}
                         {% if j.draft != True %}
 						{% if j.name != series.name %}
                             <div class="col-6 col-sm-4 col-lg-6">

@@ -15,6 +15,7 @@ urlpatterns = [
     path('', include('DashboardCommentMOD.urls')),
     path('', include('DashboardReviewsMOD.urls')),
     path('', include('DashboardUserMOD.urls')),
+    path('', include('StreamsApp.urls')),
 ]
 
 handler404 = handler404 = 'movieapp.views.NotFound'

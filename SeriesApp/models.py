@@ -7,8 +7,7 @@ class series(models.Model):
     info = models.TextField()
     thumbnail = models.FileField(upload_to='thumb/series/')
     age = models.CharField(default=13, max_length=20)
-    genre1 = models.ForeignKey(Category, related_name='series_category1', on_delete=models.CASCADE, null=True, blank=True)
-    genre2 = models.ForeignKey(Category, related_name='series_category2', on_delete=models.CASCADE, null=True, blank=True)
+    genre = models.ManyToManyField(Category, related_name='series_category', null=True, blank=True)
     rating = models.CharField(max_length=100)
     is_series_new = models.BooleanField(default=False)
     premier = models.BooleanField(default=False)
@@ -23,6 +22,10 @@ class series(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    def get_series_images(self):
+        from movieapp.models import photos
+        return photos.objects.filter(series_name=self)
     
 class season(models.Model):
     series_name = models.ForeignKey(series, related_name='season_val', on_delete=models.CASCADE)

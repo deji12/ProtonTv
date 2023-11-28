@@ -117,8 +117,8 @@
 					<!-- stats -->
 					<div class="col-12 col-sm-6 col-xl-3">
 						<div class="stats">
-							<span>Films and Series</span>
-							<p>{{num_con}}</p>
+							<span>Your created watch parties</span>
+							<p>{{request.user.get_user_profile.number_of_created_watch_parties}}</p>
 							<img src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650183956/movie/static/img/film_lbeaoq.svg" alt="">
 						</div>
 					</div>
@@ -128,7 +128,7 @@
 					<div class="col-12 col-sm-6 col-xl-3">
 						<div class="stats">
 							<span>Your comments</span>
-							<p>{{num_comment}}</p>
+							<p>{{ request.user.get_user_profile.comments }}</p>
 							<img src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650183934/movie/static/img/comments_buv7hs.svg" alt="">
 						</div>
 					</div>
@@ -138,7 +138,7 @@
 					<div class="col-12 col-sm-6 col-xl-3">
 						<div class="stats">
 							<span>Your reviews</span>
-							<p>{{num_review}}</p>
+							<p>{{ request.user.get_user_profile.reviews }}</p>
 							<img src="https://res.cloudinary.com/dxojb4izx/image/upload/v1650184323/movie/static/img/star-half-alt_ccuafp.svg" alt="">
 						</div>
 					</div>
@@ -321,21 +321,21 @@
 								<div class="col-12 col-md-6 col-lg-12 col-xl-6">
 									<div class="profile__group">
 										<label class="profile__label" for="username">Username</label>
-										<input id="username" type="text" name="username" class="profile__input" placeholder="User 123">
+										<input id="username" value="{{request.user.username}}" type="text" name="username" class="profile__input" placeholder="User 123">
 									</div>
 								</div>
 
 								<div class="col-12 col-md-6 col-lg-12 col-xl-6">
 									<div class="profile__group">
 										<label class="profile__label" for="email">Email</label>
-										<input id="email" type="text" name="email" class="profile__input" placeholder="johndoe@email.com">
+										<input id="email" type="text" value="{{request.user.email}}" name="email" class="profile__input" placeholder="johndoe@email.com">
 									</div>
 								</div>
 
 								<div class="col-12 col-md-6 col-lg-12 col-xl-6">
 									<div class="profile__group">
 										<label class="profile__label" for="firstname">First & Last Names</label>
-										<input id="firstname" type="text" name="name" class="profile__input" placeholder="John Doe">
+										<input id="firstname" value="{{request.user.get_full_name}}" type="text" name="name" class="profile__input" placeholder="John Doe">
 									</div>
 								</div>
 

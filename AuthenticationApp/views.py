@@ -46,6 +46,9 @@ def signin(request):
                 messages.error(request, 'Your account has been temporarily banned due to misconduct.')
                 return redirect('login')
             login(request, my_user)
+            if request.POST.get('next'):
+                return redirect(request.POST['next'])
+            
             return redirect('home')
         else:
             messages.error(request, 'Invalid password')
@@ -163,13 +166,7 @@ def PasswordResedtView(request, name):
 @login_required
 def profile(request):
     my_user = User.objects.get(username=request.user)
-    all_movies = movie.objects.all()
-    all_series = series.objects.all()
-    final = 0
-    for i in all_movies:
-        final+=1
-    for j in all_series:
-        final+=1
+    
     # update profile
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -208,41 +205,18 @@ def profile(request):
             my_user.save()
             
         return HttpResponse('Profile successfully updated')
-
-    #movie & series comments
-    get_comments_by_user = comment.objects.filter(name=request.user)
-    get_series_comments_by_user = episode_comment.objects.filter(name=request.user)
-    number_of_comments = 0
-    for i in get_comments_by_user:
-        number_of_comments+=1
-    for i in get_series_comments_by_user:
-        number_of_comments+=1
-
-    #movie and series reviews
-    number_of_reviews = 0
-    get_reviews_by_user = reviewss.objects.filter(name=request.user)
-    get_episode_reviews_by_user = episode_comment.objects.filter(name=request.user)
-    for i in get_reviews_by_user:
-        number_of_reviews+=1
-    for i in get_episode_reviews_by_user:
-        number_of_reviews+=1
-
+    
     #get latest reviews
     get_reviews = reviewss.objects.filter(name=request.user)
     episode_review = er.objects.all().order_by('-date')[:5]
-
 
     #order movies by clicks
     for_you = series.objects.all().order_by('-clicks')[:4]
     for_you_movie = movie.objects.all().order_by('-clicks')[:4]
 
     context = {
-        'num_comment': number_of_comments,
-        'num_review': number_of_reviews,
-        'revs': get_reviews,
         'for_you_series': for_you,
         'for_you_movie': for_you_movie,
         'episode_review': episode_review,
-        'num_con': final,
     }
     return render(request, 'movieapp/profile.html', context)

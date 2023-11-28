@@ -19,6 +19,9 @@
 								<h3 style="color: #ff55a5;">{{message}}</h1>
 							{% endfor %}
 						{% endif %}
+						{% if request.GET.next %}
+							<input type="hidden" name="next" value="{{request.GET.next}}">
+						{% endif %}
 						<div class="sign__group">
 							<input type="text" class="sign__input" placeholder="Username" name="username">
 						</div>
