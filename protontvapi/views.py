@@ -3,20 +3,20 @@ from rest_framework.decorators import api_view
 from movieapp.models import movie, series, photos
 from Globals.models import *
 from SeriesApp.models import *
-from .serializers import GetAllMoviesSerializer, GetAllSeriesSerializer, GetAllEpisodesSerializer, GetAllPhotosSerializer, GetAllSeasonsSerializer, GetAllGenresSerializer
+from .serializers import *
 from rest_framework.response import Response
 
 @api_view(['GET'])
 def home(request):
     return Response({
-        'To get all movies': 'protontv.cc/api/all-movies/',
-        'To get a particular movie': 'protontv.cc/api/get-movie/movie name/',
-        'To get all series': 'protontv.cc/api-all-series/',
-        'To get a particular series': 'protontv.cc/api/get-series/series name/',
-        'To get all series seasons':  'protontv.cc/api/all-series-seasons/',
-        'To get all series episodes': 'protontv.cc/api/all-series-episodes/',
-        'To get all genres': 'protontv.cc/api/all-genres/',
-        'To get all thumbnails': 'protontv.cc/api/all-thumbnails/',
+        'To get all movies': f'{request.get_host()}/api/all-movies/',
+        'To get a particular movie': f'{request.get_host()}/api/get-movie/movie name/',
+        'To get all series': f'{request.get_host()}/api/all-series/',
+        'To get a particular series': f'{request.get_host()}/api/get-series/series name/',
+        'To get all series seasons':  f'{request.get_host()}/api/all-series-seasons/',
+        'To get all series episodes': f'{request.get_host()}/api/all-series-episodes/',
+        'To get all genres': f'{request.get_host()}/api/all-genres/',
+        'To get all thumbnails': f'{request.get_host()}/api/all-thumbnails/',
     })
 
 @api_view(['GET'])

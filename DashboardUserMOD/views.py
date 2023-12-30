@@ -3,22 +3,43 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from movieapp.models import *
 from django.contrib import messages
+from AuthenticationApp.models import Profile
+from SeriesApp.models import episode_comment, episode_review
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def AllUsers(request):
     if request.user.is_superuser:
         all_users = Profile.objects.all()
-        user_number = 0
-        for i in all_users:
-            user_number+=1
+        
+        p = Paginator(all_users, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
         
         context = {
-            'all_users': all_users,
-            'user_num': user_number,
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
+            'user_num': all_users.count(),
         }
         return render(request, 'dashboard/users.html', context)
-    else:
-        return render('home')
+    
+    return render('home')
 
 @login_required
 def EditUser(request, email):
@@ -143,29 +164,65 @@ def EditProfileDetails(request, email):
 def VerifiedUsers(request):
     if request.user.is_superuser:
         all_users = Profile.objects.filter(verified=True)
-        user_number = 0
-        for i in all_users:
-            user_number+=1
+        
+        p = Paginator(all_users, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
         
         context = {
-            'all_users': all_users,
-            'user_num': user_number,
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
+            'user_num': all_users.count(),
         }
         return render(request, 'dashboard/users.html', context)
-    else:
-        return redirect('home')
+    
+    return redirect('home')
     
 @login_required
 def BannedUsers(request):
     if request.user.is_superuser:
         all_users = Profile.objects.filter(verified=False)
-        user_number = 0
-        for i in all_users:
-            user_number+=1
+        
+        p = Paginator(all_users, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
         
         context = {
-            'all_users': all_users,
-            'user_num': user_number,
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
+            'user_num': all_users.count(),
         }
         return render(request, 'dashboard/users.html', context)
     return redirect('home')

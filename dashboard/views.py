@@ -4,12 +4,12 @@ from AuthenticationApp.models import Profile
 from Globals.models import *
 from SeriesApp.models import *
 from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
-# Create your views here.
 @login_required
 def DashboardHome(request):
     if request.user.is_superuser:
@@ -20,18 +20,8 @@ def DashboardHome(request):
         new_reviews = episode_review.objects.all().order_by('-date')[:5]
         all_users = User.objects.all().order_by('-username')[:5]
 
-        final = 0
-        for i in comment.objects.all():
-            final+=1
-        for j in episode_comment.objects.all():
-            final+=1
-
-        final_review_num = 0
-        for i in reviewss.objects.all():
-            final_review_num+=1
-        
-        for j in episode_review.objects.all():
-            final_review_num+=1
+        number_of_comments = comment.objects.count() + episode_comment.objects.count()
+        number_of_reviews = reviewss.objects.count() + episode_review.objects.count()
 
         context = {
             'movies': all_movies, 
@@ -40,31 +30,81 @@ def DashboardHome(request):
             'new_series': new_series,
             'new_review': new_reviews,
             'users': all_users,
-            'total_comments': final,
-            'total_reviews': final_review_num,
+            'total_comments': number_of_comments,
+            'total_reviews': number_of_reviews,
+            'number_of_movies': movie.objects.count(),
+            'number_of_series': series.objects.count(),
         }
         return render(request, 'dashboard/index.html', context)
     else:
         return redirect('home')
 
 @login_required
-def Catalog(request):
+def MovieCatalog(request):
     if request.user.is_superuser:
         all_movies = movie.objects.all().order_by('-clicks')
-        all_series = series.objects.all().order_by('-clicks')
-        final = 0
-        for i in all_movies:
-            final+=1
-        for j in all_series:
-            final+=1
+        # all_series = series.objects.all().order_by('-clicks')
+        p = Paginator(all_movies, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
+
         context = {
-            'movies': all_movies, 
-            'series': all_series,
-            'content': final
+            'content': all_movies.count(),
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
         }
         return render(request, 'dashboard/catalog.html', context)
-    else:
-        return redirect('home')
+    
+    return redirect('home')
+    
+@login_required
+def SeriesCatalog(request):
+    if request.user.is_superuser:
+        all_series = series.objects.all().order_by('-clicks')
+        p = Paginator(all_series, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        # Pass additional information to the template context
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
+        context = {
+            'content': all_series.count(),
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
+        }
+        return render(request, 'dashboard/seriescatalog.html', context)
+
+    return redirect('home')
 
 @login_required
 def NotFound(request):
@@ -93,11 +133,11 @@ def DraftPostSeries(request, name):
         if get_series.draft == False:
             get_series.draft = True
             get_series.save()
-            return redirect('catalog')
+            return redirect('series-catalog')
         else:
             get_series.draft = False
             get_series.save()
-            return redirect('catalog')
+            return redirect('series-catalog')
     else:
         return redirect('home')
     
@@ -105,7 +145,7 @@ def DraftPostSeries(request, name):
 def DraftPostMovies(request, name):
     if request.user.is_superuser:
         get_movie = movie.objects.get(name=name)
-        if get_movie == False:
+        if get_movie.draft == False:
             get_movie.draft = True
             get_movie.save()
             return redirect('catalog')
@@ -113,8 +153,7 @@ def DraftPostMovies(request, name):
             get_movie.draft = False
             get_movie.save()
             return redirect('catalog')
-    else:
-        return redirect('home')
+    return redirect('home')
 
 @login_required
 def ChangePassword(request, email):
@@ -150,49 +189,91 @@ def ChangePassword(request, email):
 
 @login_required     
 def search(request):
-    if request.user.is_superuser:
-        if request.method == 'POST':
-            search_val = request.POST.get('search')
-            user_search = request.POST.get('search-user')
-            print(user_search)
-            if user_search:
-                if '@' in user_search:
-                    search_for_user_by_email = Profile.objects.filter(email=user_search)
-                    print(search_for_user_by_email)
-                    context = {
-                        'all_users': search_for_user_by_email,
-                        'search': user_search,
-                    }
-                    return render(request, 'dashboard/users.html', context)
+    if request.user.is_superuser and request.method == 'POST':
+        
+        movie_search = request.POST.get('search')
+        series_search = request.POST.get('series-search')
+        user_search = request.POST.get('search-user')
+    
+        if user_search:
 
-                else:
-                    search_for_user_by_username = Profile.objects.filter(user_name=user_search)
-                    print(search_for_user_by_username)
-                    context = {
-                        'all_users': search_for_user_by_username,
-                        'search': user_search,
-                    }
-                    return render(request, 'dashboard/users.html', context)
+            context = {'search': user_search,}
+            
+            profiles = Profile.objects.filter(
+                Q(user__first_name__icontains=user_search) |
+                Q(user__last_name__icontains=user_search) |
+                Q(user__username__icontains=user_search) |
+                Q(email__icontains=user_search)
+            )
+            context['all_users'] = profiles
 
-            if search_val:
-                filter_movie_for_search = movie.objects.filter(name__icontains=search_val)
-                filter_series_for_search = series.objects.filter(name__icontains=search_val)
+            return render(request, 'dashboard/users.html', context)
 
-                final = 0
-                for i in filter_movie_for_search:
-                    final+=1
-                for i in filter_series_for_search:
-                    final+=1
+        if movie_search:
+            filter_movie_for_search = movie.objects.filter(name__icontains=movie_search)
 
-                context = {
-                    'movie_result': filter_movie_for_search,
-                    'series_result': filter_series_for_search,
-                    'search': search_val,
-                    'final': final,
-                }
-                return render(request, 'dashboard/search.html', context)
-    else:
-        return redirect('home')
+            p = Paginator(filter_movie_for_search, 10)
+            page = request.GET.get('page')
+            page_series = p.get_page(page)
+
+            try:
+                # Get the current page's items
+                current_page_items = p.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page_items = p.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page_items = p.page(p.num_pages)
+
+            # Pass additional information to the template context
+            total_items = p.count
+            start_index = current_page_items.start_index()
+            end_index = current_page_items.end_index()
+
+            context = {
+                'pages': page_series,
+                'start_index': start_index,
+                'end_index': end_index,
+                'total_items': total_items,
+                'search': movie_search,
+                'final': filter_movie_for_search.count(),
+            }
+            return render(request, 'dashboard/search.html', context)
+        
+        if series_search:
+            filter_series_for_search = series.objects.filter(name__icontains=series_search)
+
+            p = Paginator(filter_series_for_search, 10)
+            page = request.GET.get('page')
+            page_series = p.get_page(page)
+
+            try:
+                # Get the current page's items
+                current_page_items = p.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page_items = p.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page_items = p.page(p.num_pages)
+
+            # Pass additional information to the template context
+            total_items = p.count
+            start_index = current_page_items.start_index()
+            end_index = current_page_items.end_index()
+
+            context = {
+                'pages': page_series,
+                'start_index': start_index,
+                'end_index': end_index,
+                'total_items': total_items,
+                'search': series_search,
+                'final': filter_series_for_search.count(),
+            }
+            return render(request, 'dashboard/search.html', context)
+    
+    return redirect('home')
 
 @login_required
 def Date_Created(request):
@@ -217,13 +298,31 @@ def Date_Created(request):
 def DateUserCreated(request):
     if request.user.is_superuser:
         all_users = Profile.objects.all().order_by('-creation_date')
-        user_number = 0
-        for i in all_users:
-            user_number+=1
+        
+        p = Paginator(all_users, 10)
+        page = request.GET.get('page')
+        page_series = p.get_page(page)
+
+        try:
+            # Get the current page's items
+            current_page_items = p.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page_items = p.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page_items = p.page(p.num_pages)
+
+        total_items = p.count
+        start_index = current_page_items.start_index()
+        end_index = current_page_items.end_index()
         
         context = {
-            'all_users': all_users,
-            'user_num': user_number,
+            'pages': page_series,
+            'start_index': start_index,
+            'end_index': end_index,
+            'total_items': total_items,
+            'user_num': all_users.count(),
         }
         return render(request, 'dashboard/users.html', context)
     else:

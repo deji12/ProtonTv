@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from movieapp.models import *
+from SeriesApp.models import episode_comment,episode
+from AuthenticationApp.models import Profile
 
 @login_required
 def Comments(request):
@@ -12,8 +14,8 @@ def Comments(request):
             'movie': movie_comment,
         }
         return render(request, 'dashboard/comments.html', context)
-    else:
-        return redirect('home')
+    
+    return redirect('home')
 
 @login_required
 def DeleteCommentSeries(request, name, title, series_name, comment_content, email):

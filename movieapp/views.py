@@ -1,8 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import movie, series
 from django.contrib import messages
-from .models import comment, reviewss, photos
-from AuthenticationApp.models import Profile
 from django.core.mail import EmailMessage
 from django.conf import settings
 

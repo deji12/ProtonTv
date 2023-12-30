@@ -4,14 +4,18 @@ from SeriesApp.models import *
 from Globals.models import *
 
 class GetAllMoviesSerializer(serializers.ModelSerializer):
+
+    genre = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = movie
-        fields = ['name', 'info', 'thumbnail', 'age', 'genre1', 'genre2', 'rating', 'year', 'country', 'video', 'duration']
+        fields = ['name', 'info', 'thumbnail', 'age', 'genre', 'rating', 'year', 'country', 'video', 'duration']
 
 class GetAllSeriesSerializer(serializers.ModelSerializer):
+    genre = serializers.StringRelatedField(many=True)
     class Meta:
         model = series
-        fields = '__all__'
+        fields = ['name', 'info', 'thumbnail', 'age', 'genre', 'rating', 'year', 'country']
 
 class GetAllEpisodesSerializer(serializers.ModelSerializer):
     class Meta:

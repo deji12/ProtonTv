@@ -9,7 +9,7 @@
 				<div class="main__title">
 					<h2>Dashboard</h2>
 
-					<a href="{% url 'add-item' %}" class="main__title-link">add item</a>
+					<a href="{% url 'admin:index' %}" target="_blank" class="main__title-link">add item</a>
 				</div>
 			</div>
 			<!-- end main title -->
@@ -19,8 +19,8 @@
 			<!-- stats -->
 			<div class="col-12 col-sm-6 col-xl-3">
 				<div class="stats">
-					<span>Unique views this month</span>
-					<p>5 678</p>
+					<span>Number of movies</span>
+					<p>{{number_of_movies}}</p>
 					<img src="https://res.cloudinary.com/dxojb4izx/image/upload/v1654965332/movie/static/dashboard/img/graph-bar_u15i2r.svg" alt="">
 				</div>
 			</div>
@@ -29,8 +29,8 @@
 			<!-- stats -->
 			<div class="col-12 col-sm-6 col-xl-3">
 				<div class="stats">
-					<span>Items added this month</span>
-					<p>172</p>
+					<span>Number of series</span>
+					<p>{{number_of_series}}</p>
 					<img src="https://res.cloudinary.com/dxojb4izx/image/upload/v1654965332/movie/static/dashboard/img/film_exwmgs.svg" alt="">
 				</div>
 			</div>
@@ -64,7 +64,7 @@
 
 						<div class="dashbox__wrap">
 							<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-							<a class="dashbox__more" href="{% url 'home' %}">View All</a>
+							<a class="dashbox__more" href="{% url 'home' %}" target="_blank">View All</a>
 						</div>
 					</div>
 
@@ -110,7 +110,7 @@
 			
 									<div class="dashbox__wrap">
 										<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-										<a class="dashbox__more" href="{% url 'series' %}">View All</a>
+										<a class="dashbox__more" href="{% url 'series' %}" target="_blank">View All</a>
 									</div>
 								</div>
 			
@@ -156,7 +156,7 @@
 
 						<div class="dashbox__wrap">
 							<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-							<a class="dashbox__more" href="{% url 'home' %}">View All</a>
+							<a class="dashbox__more" href="{% url 'home' %}" target="_blank">View All</a>
 						</div>
 					</div>
 
@@ -206,7 +206,7 @@
 
 						<div class="dashbox__wrap">
 							<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-							<a class="dashbox__more" href="{% url 'series' %}">View All</a>
+							<a class="dashbox__more" href="{% url 'series' %}" target="_blank">View All</a>
 						</div>
 					</div>
 
@@ -256,7 +256,7 @@
 
 						<div class="dashbox__wrap">
 							<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-							<a class="dashbox__more" href="{% url 'home' %}">View All</a>
+							<a class="dashbox__more" href="{% url 'users' %}" target="_blank">View All</a>
 						</div>
 					</div>
 
@@ -302,7 +302,7 @@
 
 						<div class="dashbox__wrap">
 							<a class="dashbox__refresh" href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21,11a1,1,0,0,0-1,1,8.05,8.05,0,1,1-2.22-5.5h-2.4a1,1,0,0,0,0,2h4.53a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4.77A10,10,0,1,0,22,12,1,1,0,0,0,21,11Z"/></svg></a>
-							<a class="dashbox__more" href="{% url 'series' %}">View All</a>
+							<a class="dashbox__more" href="{% url 'series' %}" target="_blank">View All</a>
 						</div>
 					</div>
 

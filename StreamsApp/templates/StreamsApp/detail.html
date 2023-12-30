@@ -18,7 +18,7 @@
 <div class="page-404__content" id="copy-link">
     <h1 class="page-404__title">Url</h1>
     <p class="page-404__text" id="url"></p>
-    <a href="#" class="page-404__btn"><span id="copy-btn">Copy url</span></a>
+    <a href="#" class="page-404__btn" id="copy-btn"><span>Copy url</span></a>
 </div>
 
 <script>
@@ -89,9 +89,85 @@
       border-radius: 5px;
     }
 </style>
+
+
+{% else %}
+
+<div class="page-404__content" id="visitor" hidden>
+    <h1 class="page-404__title">Url</h1>
+    <p class="page-404__text" id="">You have visited a watch party created by {{stream.creator.username}}</p>
+    <a href="#" class="page-404__btn" id="okay-btn"><span>Ok</span></a>
+</div>
+
+<div class="page-404__content" id="parent_container" hidden>
+    <h1 class="page-404__title">Notice</h1>
+    <p class="page-404__text" id="">The Safari browser does not support this feature. Please use a diffetent web browser</p>
+    <a href="#" class="page-404__btn" id="prevent-user-from-viewing"><span>Ok</span></a>
+</div>
+
+<script>
+
+	// Get the user agent stringb
+	var userAgent = navigator.userAgent;
+	
+	if (userAgent.includes("Safari") && !userAgent.includes("Chrome")){
+		document.getElementById("parent_container").hidden = false;
+
+		document.getElementById('prevent-user-from-viewing').addEventListener('click', function() {
+		  document.getElementById('parent_container').remove();
+		  window.location.href = "{% url 'home' %}"
+		});
+	}
+	else {
+		document.getElementById("visitor").hidden = false;
+		document.getElementById('okay-btn').addEventListener('click', function() {
+		document.getElementById('visitor').remove();
+		}); 
+	}
+    
+</script>
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .page-404__content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* background-color: rgba(255, 255, 255, 0.8); */
+      padding: 20px;
+      text-align: center;
+      z-index: 9999;
+    }
+
+    .page-404__title {
+      font-size: 4em;
+    }
+
+    .page-404__text {
+      margin-top: 10px;
+    }
+
+    .page-404__btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+</style>
+
 {% endif %}
-
-
 
 <!-- details -->
 <section class="section details">
@@ -600,6 +676,7 @@
 <!-- JS -->
 
 <script>
+
     const websocketMessageProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     const wsMessageEndpoint = `${websocketMessageProtocol}://${window.location.host}/ws/watch-party/{{stream.stream_id}}/`;
     const socket = new WebSocket(wsMessageEndpoint);

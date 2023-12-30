@@ -9,10 +9,10 @@ from django.core.paginator import Paginator
 
 def Series(request):
 
-    get_series = series.objects.filter(category='series').order_by('-series_air_date')
+    get_series = series.objects.filter(category='series', draft=False, premier=False).order_by('-series_air_date')
     category = Category.objects.all()
     get_rate = rate.objects.all()
-    get_year = year.objects.all()
+    get_year = year.objects.all().order_by('-id')
 
     p = Paginator(get_series, 10)
     page = request.GET.get('page')
@@ -81,10 +81,10 @@ def Anime(request):
         series (seasons, episodes, comments, reviews, etc)
     '''
 
-    get_anime = series.objects.filter(category='anime').order_by('-series_air_date')
+    get_anime = series.objects.filter(category='anime', draft=False, premier=False).order_by('-series_air_date')
     category = Category.objects.all()
     get_rate = rate.objects.all()
-    get_year = year.objects.all()
+    get_year = year.objects.all().order_by('-id')
 
     p = Paginator(get_anime, 10)
     page = request.GET.get('page')
@@ -165,7 +165,7 @@ def series_detail(request, name):
 
     if get_series.category == 'series':
     
-        filtered_series = series.objects.filter(genre__in=get_series.genre.all()).order_by('-series_air_date')[:6]
+        filtered_series = series.objects.filter(genre__in=get_series.genre.all(), draft=False, premier=False).order_by('-series_air_date')[:6]
 
         context = {
         'series': get_series,
@@ -178,7 +178,7 @@ def series_detail(request, name):
         return render(request, 'movieapp/details2.html', context)
     
     else:
-        filtered_series = series.objects.filter(genre__in=get_series.genre.all(), category='anime').order_by('-series_air_date')[:6]
+        filtered_series = series.objects.filter(genre__in=get_series.genre.all(), category='anime', draft=False, premier=False).order_by('-series_air_date')[:6]
         
         context = {
         'series': get_series,
@@ -243,7 +243,7 @@ def series_detail_epi(request, name, seasons ,epi):
 
     if get_series.category == 'series':
     
-        filtered_series = series.objects.filter(genre__in=get_series.genre.all()).order_by('-series_air_date')[:6]
+        filtered_series = series.objects.filter(genre__in=get_series.genre.all(), draft=False, premier=False).order_by('-series_air_date')[:6]
 
         context = {
             'series': get_series,
@@ -259,7 +259,7 @@ def series_detail_epi(request, name, seasons ,epi):
         return render(request, 'movieapp/epi.html', context)
     
     else:
-        filtered_series = series.objects.filter(genre__in=get_series.genre.all()).order_by('-series_air_date')[:6]
+        filtered_series = series.objects.filter(genre__in=get_series.genre.all(), draft=False, premier=False).order_by('-series_air_date')[:6]
 
         context = {
             'series': get_series,

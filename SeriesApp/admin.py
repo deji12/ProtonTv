@@ -23,6 +23,6 @@ class SeasonAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 admin.site.register(models.season, SeasonAdmin)
 
 class EpisodeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ['title', 'episode_num', 'series_name', 'season_val', 'duration', 'dou']
+    list_display = ['title', 'episode_num', 'series_name', 'season_val', 'duration', 'date_of_upload']
 
 admin.site.register(models.episode, EpisodeAdmin)

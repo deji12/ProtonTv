@@ -55,11 +55,11 @@
 					<table class="main__table">
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>ITEM</th>
+								<!-- <th>ID</th> -->
+								<th>TITLE</th>
 								<th>AUTHOR</th>
 								<th>TEXT</th>
-								<th>LIKE / DISLIKE</th>
+								<!-- <th>LIKE / DISLIKE</th> -->
 								<th>CRAETED DATE</th>
 								<th>ACTIONS</th>
 							</tr>
@@ -68,9 +68,9 @@
 						<tbody>
 							{% for i in series %}
 							<tr>
-								<td>
+								<!-- <td>
 									<div class="main__table-text">{{i.id}}</div>
-								</td>
+								</td> -->
 								<td>
 									<div class="main__table-text">{{i.series_name}}</div>
 								</td>
@@ -80,9 +80,9 @@
 								<td>
 									<div id="content" class="main__table-text">{{i.body}}</div>
 								</td>
-								<td>
+								<!-- <td>
 									<div class="main__table-text">12 / 7</div>
-								</td>
+								</td> -->
 								<td>
 									<div class="main__table-text">{{i.date}}</div>
 								</td>
@@ -113,9 +113,9 @@
 
 							{% for j in movie %}
 							<tr>
-								<td>
+								<!-- <td>
 									<div class="main__table-text">{{j.id}}</div>
-								</td>
+								</td> -->
 								<td>
 									<div class="main__table-text">{{j.movie}}</div>
 								</td>
@@ -125,9 +125,9 @@
 								<td>
 									<div id="content" class="main__table-text">{{j.body}}</div>
 								</td>
-								<td>
+								<!-- <td>
 									<div class="main__table-text">12 / 7</div>
-								</td>
+								</td> -->
 								<td>
 									<div class="main__table-text">{{j.date}}</div>
 								</td>

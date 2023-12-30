@@ -9,7 +9,7 @@
   gtag('config', 'G-371TF0T6ZW');
 </script>
 
-<script src="https://cdn.websitepolicies.io/lib/cookieconsent/cookieconsent.min.js" defer></script><script>window.addEventListener("load",function(){window.wpcc.init({"corners":"large","colors":{"popup":{"background":"#f6f6f6","text":"#000000","border":"#555555"},"button":{"background":"#555555","text":"#ffffff"}},"border":"thin","content":{"href":"https://protontv.cc/cookie-policy/","message":"ProtonTv uses cookies to ensure you get the best experience on our website"}})});</script>
+<script src="https://cdn.websitepolicies.io/lib/cookieconsent/cookieconsent.min.js" defer></script><script>window.addEventListener("load",function(){window.wpcc.init({"corners":"large","colors":{"popup":{"background":"#f6f6f6","text":"#000000","border":"#555555"},"button":{"background":"#555555","text":"#ffffff"}},"border":"thin","content":{"href":"https://protontv.cc/cookie-policy/","message":"{{ site_information.site_name }} uses cookies to ensure you get the best experience on our website"}})});</script>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8886186300580553"
      crossorigin="anonymous"></script>
@@ -40,7 +40,7 @@
 	<meta name="movie" content="the gray man, spiderhead, stranger things">
 	<meta name="keywords" content="movie, series, tv shows, ">
 	<meta name="author" content="THE PROTON GUY">
-	<title>ProtonTv – Online Movies, TV Shows & Cinema </title>
+	<title> {{ site_information.site_title }}</title>
 
 <!-- scripts -->
 
@@ -68,7 +68,7 @@
 					<div class="header__content">
 						<!-- header logo -->
 						<a href="{% url 'home' %}" class="header__logo">
-							<h1><span style="color: white;">Proton</span><span style="color: #ff55a5;">Tv</span></h1>
+							<h1><span style="color: white;">{{ site_information.site_name }}</span><span style="color: #ff55a5;">Tv</span></h1>
 						</a>
 						<!-- end header logo -->
 
@@ -215,7 +215,7 @@
 
 </header>
 
-<body oncontextmenu="return false;"></body>
+<!-- <body oncontextmenu="return false;"></body>
 
 <script>
 	document.onkeydown = function(e) {
@@ -232,4 +232,4 @@
 		return false;
 	}
 	}
-</script>
+</script> -->

@@ -9,10 +9,10 @@ def catalog_grid(request):
         displaying all movies in a grid form
     '''
 
-    get_movies = movie.objects.filter(draft=False).order_by('-date_added')
+    get_movies = movie.objects.filter(draft=False, premier=False).order_by('-date_added')
     category = Category.objects.all()
     get_rate = rate.objects.all()
-    get_year = year.objects.all()
+    get_year = year.objects.all().order_by('-id')
 
     p = Paginator(get_movies, 18)
     page = request.GET.get('page')
@@ -32,7 +32,7 @@ def catalog_grid(request):
         if genre:
             check_genre = Category.objects.filter(cat=genre)
             
-            filter_movie_obj = movie.objects.filter(genre__in=check_genre).order_by('-date_added')
+            filter_movie_obj = movie.objects.filter(genre__in=check_genre, draft=False, premier=False).order_by('-date_added')
             
             if yearr:
                 filter_movie_obj.filter(year_range=yearr)
@@ -52,7 +52,7 @@ def catalog_grid(request):
             
         elif yearr:
 
-            filter_movie_obj = movie.objects.filter(year_range=yearr).order_by('-date_added')
+            filter_movie_obj = movie.objects.filter(year_range=yearr, draft=False, premier=False).order_by('-date_added')
 
             p = Paginator(filter_movie_obj, 18)
             page = request.GET.get('page')
@@ -77,10 +77,10 @@ def catalog_grid(request):
     return render(request, 'movieapp/catalog1.html', context)
 
 def catalog_list(request):
-    get_movies = movie.objects.all().order_by('-date_added')
+    get_movies = movie.objects.filter(draft=False, premier=False).order_by('-date_added')
     category = Category.objects.all()
     get_rate = rate.objects.all()
-    get_year = year.objects.all()
+    get_year = year.objects.all().order_by('-id')
 
     p = Paginator(get_movies, 18)
     page = request.GET.get('page')
@@ -100,7 +100,7 @@ def catalog_list(request):
         if genre:
             check_genre = Category.objects.filter(cat=genre)
             
-            filter_movie_obj = movie.objects.filter(genre__in=check_genre).order_by('-date_added')
+            filter_movie_obj = movie.objects.filter(genre__in=check_genre, draft=False, premier=False).order_by('-date_added')
             
             if yearr:
                 filter_movie_obj.filter(year_range=yearr)
@@ -120,7 +120,7 @@ def catalog_list(request):
             
         elif yearr:
 
-            filter_movie_obj = movie.objects.filter(year_range=yearr).order_by('-date_added')
+            filter_movie_obj = movie.objects.filter(year_range=yearr, draft=False, premier=False).order_by('-date_added')
 
             p = Paginator(filter_movie_obj, 18)
             page = request.GET.get('page')

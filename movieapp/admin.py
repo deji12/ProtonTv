@@ -15,5 +15,5 @@ class ReviewAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 admin.site.register(models.reviewss, ReviewAdmin)
 
 class PhotoAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ['series_name', 'movie_name', 'pic']
-admin.site.register(models.photos)
+    list_display = ['movie_name', 'series_name', 'pic']
+admin.site.register(models.photos, PhotoAdmin)
