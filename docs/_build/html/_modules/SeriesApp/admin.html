@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeriesApp.admin &#8212; Movie Website version 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=cf9c907b"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SeriesApp.admin</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">import_export.admin</span> <span class="kn">import</span> <span class="n">ImportExportModelAdmin</span>
+
+<div class="viewcode-block" id="SeriesAdmin">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.admin.SeriesAdmin">[docs]</a>
+<span class="k">class</span> <span class="nc">SeriesAdmin</span><span class="p">(</span><span class="n">ImportExportModelAdmin</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;draft&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="n">SeriesAdmin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EpisodeCommentAdmin">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.admin.EpisodeCommentAdmin">[docs]</a>
+<span class="k">class</span> <span class="nc">EpisodeCommentAdmin</span><span class="p">(</span><span class="n">ImportExportModelAdmin</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;series_name&#39;</span><span class="p">,</span><span class="s1">&#39;episode&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span>  <span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">episode_comment</span><span class="p">,</span> <span class="n">EpisodeCommentAdmin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EpisodeReviewAdmin">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.admin.EpisodeReviewAdmin">[docs]</a>
+<span class="k">class</span> <span class="nc">EpisodeReviewAdmin</span><span class="p">(</span><span class="n">ImportExportModelAdmin</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;series_name&#39;</span><span class="p">,</span><span class="s1">&#39;episode&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;rate&#39;</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">]</span></div>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">episode_review</span><span class="p">,</span> <span class="n">EpisodeReviewAdmin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SeasonAdmin">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.admin.SeasonAdmin">[docs]</a>
+<span class="k">class</span> <span class="nc">SeasonAdmin</span><span class="p">(</span><span class="n">ImportExportModelAdmin</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;series_name&#39;</span><span class="p">,</span><span class="s1">&#39;season_num&#39;</span><span class="p">,</span> <span class="s1">&#39;heading&#39;</span><span class="p">,</span> <span class="s1">&#39;collapse&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">season</span><span class="p">,</span> <span class="n">SeasonAdmin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EpisodeAdmin">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.admin.EpisodeAdmin">[docs]</a>
+<span class="k">class</span> <span class="nc">EpisodeAdmin</span><span class="p">(</span><span class="n">ImportExportModelAdmin</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;episode_num&#39;</span><span class="p">,</span> <span class="s1">&#39;series_name&#39;</span><span class="p">,</span> <span class="s1">&#39;season_val&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;date_of_upload&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">episode</span><span class="p">,</span> <span class="n">EpisodeAdmin</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Movie Website</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, The Proton Guy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

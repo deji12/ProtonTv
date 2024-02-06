@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeriesApp.models &#8212; Movie Website version 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=cf9c907b"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SeriesApp.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">Globals.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">CATEGORY_CHOICE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;series&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;anime&quot;</span><span class="p">,</span> <span class="s2">&quot;anime&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">AGE_CHOICE</span> <span class="o">=</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">19</span><span class="p">)]</span>
+
+<span class="n">current_year</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
+<span class="n">YEAR_CHOICE</span> <span class="o">=</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span> <span class="n">current_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+<span class="n">YEAR_RANGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1950</span><span class="p">,</span> <span class="n">current_year</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1955</span><span class="p">,</span> <span class="n">current_year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">]</span>
+
+<span class="c1"># Adjust the last entry to cover the remaining years</span>
+<span class="k">if</span> <span class="n">current_year</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">last_range</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_year</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">current_year</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_year</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">current_year</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">YEAR_RANGES</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_range</span><span class="p">)</span>
+
+<span class="n">DURATION_RANGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">301</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">SEASON_NUMBER</span> <span class="o">=</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
+<span class="n">HEADING</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;headingOne&quot;</span><span class="p">,</span> <span class="s2">&quot;headingOne&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingTwo&quot;</span><span class="p">,</span> <span class="s2">&quot;headingTwo&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingThree&quot;</span><span class="p">,</span> <span class="s2">&quot;headingThree&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingFour&quot;</span><span class="p">,</span> <span class="s2">&quot;headingFour&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingFive&quot;</span><span class="p">,</span> <span class="s2">&quot;headingFive&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingSix&quot;</span><span class="p">,</span> <span class="s2">&quot;headingSix&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingSeven&quot;</span><span class="p">,</span> <span class="s2">&quot;headingSeven&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingEight&quot;</span><span class="p">,</span> <span class="s2">&quot;headingEight&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingNine&quot;</span><span class="p">,</span> <span class="s2">&quot;headingNine&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;headingTen&quot;</span><span class="p">,</span> <span class="s2">&quot;headingTen&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">COLLAPSE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;collapseOne&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseOne&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseTwo&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseTwo&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseThree&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseThree&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseFour&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseFour&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseFive&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseFive&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseSix&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseSix&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseSeven&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseSeven&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseEight&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseEight&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseNine&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseNine&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;collapseTen&quot;</span><span class="p">,</span> <span class="s2">&quot;collapseTen&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">COUNTRY_CHOICES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;Afghanistan&#39;</span><span class="p">,</span> <span class="s1">&#39;Afghanistan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Albania&#39;</span><span class="p">,</span> <span class="s1">&#39;Albania&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Algeria&#39;</span><span class="p">,</span> <span class="s1">&#39;Algeria&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Andorra&#39;</span><span class="p">,</span> <span class="s1">&#39;Andorra&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Angola&#39;</span><span class="p">,</span> <span class="s1">&#39;Angola&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Antigua and Barbuda&#39;</span><span class="p">,</span> <span class="s1">&#39;Antigua and Barbuda&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Argentina&#39;</span><span class="p">,</span> <span class="s1">&#39;Argentina&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Armenia&#39;</span><span class="p">,</span> <span class="s1">&#39;Armenia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Australia&#39;</span><span class="p">,</span> <span class="s1">&#39;Australia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Austria&#39;</span><span class="p">,</span> <span class="s1">&#39;Austria&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Azerbaijan&#39;</span><span class="p">,</span> <span class="s1">&#39;Azerbaijan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bahamas&#39;</span><span class="p">,</span> <span class="s1">&#39;Bahamas&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bahrain&#39;</span><span class="p">,</span> <span class="s1">&#39;Bahrain&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bangladesh&#39;</span><span class="p">,</span> <span class="s1">&#39;Bangladesh&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Barbados&#39;</span><span class="p">,</span> <span class="s1">&#39;Barbados&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Belarus&#39;</span><span class="p">,</span> <span class="s1">&#39;Belarus&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Belgium&#39;</span><span class="p">,</span> <span class="s1">&#39;Belgium&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Belize&#39;</span><span class="p">,</span> <span class="s1">&#39;Belize&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Benin&#39;</span><span class="p">,</span> <span class="s1">&#39;Benin&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bhutan&#39;</span><span class="p">,</span> <span class="s1">&#39;Bhutan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bolivia&#39;</span><span class="p">,</span> <span class="s1">&#39;Bolivia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bosnia and Herzegovina&#39;</span><span class="p">,</span> <span class="s1">&#39;Bosnia and Herzegovina&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Botswana&#39;</span><span class="p">,</span> <span class="s1">&#39;Botswana&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Brazil&#39;</span><span class="p">,</span> <span class="s1">&#39;Brazil&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Brunei&#39;</span><span class="p">,</span> <span class="s1">&#39;Brunei&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Bulgaria&#39;</span><span class="p">,</span> <span class="s1">&#39;Bulgaria&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Burkina Faso&#39;</span><span class="p">,</span> <span class="s1">&#39;Burkina Faso&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Burundi&#39;</span><span class="p">,</span> <span class="s1">&#39;Burundi&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Cabo Verde&#39;</span><span class="p">,</span> <span class="s1">&#39;Cabo Verde&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Cambodia&#39;</span><span class="p">,</span> <span class="s1">&#39;Cambodia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Cameroon&#39;</span><span class="p">,</span> <span class="s1">&#39;Cameroon&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Canada&#39;</span><span class="p">,</span> <span class="s1">&#39;Canada&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Central African Republic&#39;</span><span class="p">,</span> <span class="s1">&#39;Central African Republic&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Chad&#39;</span><span class="p">,</span> <span class="s1">&#39;Chad&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Chile&#39;</span><span class="p">,</span> <span class="s1">&#39;Chile&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;China&#39;</span><span class="p">,</span> <span class="s1">&#39;China&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Colombia&#39;</span><span class="p">,</span> <span class="s1">&#39;Colombia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Comoros&#39;</span><span class="p">,</span> <span class="s1">&#39;Comoros&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Congo (Congo-Brazzaville)&#39;</span><span class="p">,</span> <span class="s1">&#39;Congo (Congo-Brazzaville)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Costa Rica&#39;</span><span class="p">,</span> <span class="s1">&#39;Costa Rica&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Croatia&#39;</span><span class="p">,</span> <span class="s1">&#39;Croatia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Cuba&#39;</span><span class="p">,</span> <span class="s1">&#39;Cuba&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Cyprus&#39;</span><span class="p">,</span> <span class="s1">&#39;Cyprus&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Czechia (Czech Republic)&#39;</span><span class="p">,</span> <span class="s1">&#39;Czechia (Czech Republic)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Denmark&#39;</span><span class="p">,</span> <span class="s1">&#39;Denmark&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Djibouti&#39;</span><span class="p">,</span> <span class="s1">&#39;Djibouti&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Dominica&#39;</span><span class="p">,</span> <span class="s1">&#39;Dominica&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Dominican Republic&#39;</span><span class="p">,</span> <span class="s1">&#39;Dominican Republic&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Ecuador&#39;</span><span class="p">,</span> <span class="s1">&#39;Ecuador&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Egypt&#39;</span><span class="p">,</span> <span class="s1">&#39;Egypt&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;El Salvador&#39;</span><span class="p">,</span> <span class="s1">&#39;El Salvador&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Equatorial Guinea&#39;</span><span class="p">,</span> <span class="s1">&#39;Equatorial Guinea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Eritrea&#39;</span><span class="p">,</span> <span class="s1">&#39;Eritrea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Estonia&#39;</span><span class="p">,</span> <span class="s1">&#39;Estonia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Eswatini (fmr. &quot;Swaziland&quot;)&#39;</span><span class="p">,</span> <span class="s1">&#39;Eswatini (fmr. &quot;Swaziland&quot;)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Ethiopia&#39;</span><span class="p">,</span> <span class="s1">&#39;Ethiopia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Fiji&#39;</span><span class="p">,</span> <span class="s1">&#39;Fiji&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Finland&#39;</span><span class="p">,</span> <span class="s1">&#39;Finland&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;France&#39;</span><span class="p">,</span> <span class="s1">&#39;France&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Gabon&#39;</span><span class="p">,</span> <span class="s1">&#39;Gabon&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Gambia&#39;</span><span class="p">,</span> <span class="s1">&#39;Gambia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Georgia&#39;</span><span class="p">,</span> <span class="s1">&#39;Georgia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Germany&#39;</span><span class="p">,</span> <span class="s1">&#39;Germany&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Ghana&#39;</span><span class="p">,</span> <span class="s1">&#39;Ghana&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Greece&#39;</span><span class="p">,</span> <span class="s1">&#39;Greece&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Grenada&#39;</span><span class="p">,</span> <span class="s1">&#39;Grenada&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Guatemala&#39;</span><span class="p">,</span> <span class="s1">&#39;Guatemala&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Guinea&#39;</span><span class="p">,</span> <span class="s1">&#39;Guinea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Guinea-Bissau&#39;</span><span class="p">,</span> <span class="s1">&#39;Guinea-Bissau&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Guyana&#39;</span><span class="p">,</span> <span class="s1">&#39;Guyana&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Haiti&#39;</span><span class="p">,</span> <span class="s1">&#39;Haiti&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Holy See&#39;</span><span class="p">,</span> <span class="s1">&#39;Holy See&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Honduras&#39;</span><span class="p">,</span> <span class="s1">&#39;Honduras&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Hungary&#39;</span><span class="p">,</span> <span class="s1">&#39;Hungary&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Iceland&#39;</span><span class="p">,</span> <span class="s1">&#39;Iceland&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;India&#39;</span><span class="p">,</span> <span class="s1">&#39;India&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Indonesia&#39;</span><span class="p">,</span> <span class="s1">&#39;Indonesia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Iran&#39;</span><span class="p">,</span> <span class="s1">&#39;Iran&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Iraq&#39;</span><span class="p">,</span> <span class="s1">&#39;Iraq&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Ireland&#39;</span><span class="p">,</span> <span class="s1">&#39;Ireland&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Israel&#39;</span><span class="p">,</span> <span class="s1">&#39;Israel&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Italy&#39;</span><span class="p">,</span> <span class="s1">&#39;Italy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Jamaica&#39;</span><span class="p">,</span> <span class="s1">&#39;Jamaica&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Japan&#39;</span><span class="p">,</span> <span class="s1">&#39;Japan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Jordan&#39;</span><span class="p">,</span> <span class="s1">&#39;Jordan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kazakhstan&#39;</span><span class="p">,</span> <span class="s1">&#39;Kazakhstan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kenya&#39;</span><span class="p">,</span> <span class="s1">&#39;Kenya&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kiribati&#39;</span><span class="p">,</span> <span class="s1">&#39;Kiribati&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kuwait&#39;</span><span class="p">,</span> <span class="s1">&#39;Kuwait&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Kyrgyzstan&#39;</span><span class="p">,</span> <span class="s1">&#39;Kyrgyzstan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Laos&#39;</span><span class="p">,</span> <span class="s1">&#39;Laos&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Latvia&#39;</span><span class="p">,</span> <span class="s1">&#39;Latvia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Lebanon&#39;</span><span class="p">,</span> <span class="s1">&#39;Lebanon&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Lesotho&#39;</span><span class="p">,</span> <span class="s1">&#39;Lesotho&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Liberia&#39;</span><span class="p">,</span> <span class="s1">&#39;Liberia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Libya&#39;</span><span class="p">,</span> <span class="s1">&#39;Libya&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Liechtenstein&#39;</span><span class="p">,</span> <span class="s1">&#39;Liechtenstein&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Lithuania&#39;</span><span class="p">,</span> <span class="s1">&#39;Lithuania&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Luxembourg&#39;</span><span class="p">,</span> <span class="s1">&#39;Luxembourg&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Madagascar&#39;</span><span class="p">,</span> <span class="s1">&#39;Madagascar&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Malawi&#39;</span><span class="p">,</span> <span class="s1">&#39;Malawi&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Malaysia&#39;</span><span class="p">,</span> <span class="s1">&#39;Malaysia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Maldives&#39;</span><span class="p">,</span> <span class="s1">&#39;Maldives&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mali&#39;</span><span class="p">,</span> <span class="s1">&#39;Mali&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Malta&#39;</span><span class="p">,</span> <span class="s1">&#39;Malta&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Marshall Islands&#39;</span><span class="p">,</span> <span class="s1">&#39;Marshall Islands&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mauritania&#39;</span><span class="p">,</span> <span class="s1">&#39;Mauritania&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mauritius&#39;</span><span class="p">,</span> <span class="s1">&#39;Mauritius&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mexico&#39;</span><span class="p">,</span> <span class="s1">&#39;Mexico&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Micronesia&#39;</span><span class="p">,</span> <span class="s1">&#39;Micronesia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Moldova&#39;</span><span class="p">,</span> <span class="s1">&#39;Moldova&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Monaco&#39;</span><span class="p">,</span> <span class="s1">&#39;Monaco&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mongolia&#39;</span><span class="p">,</span> <span class="s1">&#39;Mongolia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Montenegro&#39;</span><span class="p">,</span> <span class="s1">&#39;Montenegro&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Morocco&#39;</span><span class="p">,</span> <span class="s1">&#39;Morocco&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mozambique&#39;</span><span class="p">,</span> <span class="s1">&#39;Mozambique&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Myanmar (formerly Burma)&#39;</span><span class="p">,</span> <span class="s1">&#39;Myanmar (formerly Burma)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Namibia&#39;</span><span class="p">,</span> <span class="s1">&#39;Namibia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Nauru&#39;</span><span class="p">,</span> <span class="s1">&#39;Nauru&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Nepal&#39;</span><span class="p">,</span> <span class="s1">&#39;Nepal&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Netherlands&#39;</span><span class="p">,</span> <span class="s1">&#39;Netherlands&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;New Zealand&#39;</span><span class="p">,</span> <span class="s1">&#39;New Zealand&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Nicaragua&#39;</span><span class="p">,</span> <span class="s1">&#39;Nicaragua&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Niger&#39;</span><span class="p">,</span> <span class="s1">&#39;Niger&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Nigeria&#39;</span><span class="p">,</span> <span class="s1">&#39;Nigeria&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;North Korea&#39;</span><span class="p">,</span> <span class="s1">&#39;North Korea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;North Macedonia&#39;</span><span class="p">,</span> <span class="s1">&#39;North Macedonia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Norway&#39;</span><span class="p">,</span> <span class="s1">&#39;Norway&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Oman&#39;</span><span class="p">,</span> <span class="s1">&#39;Oman&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Pakistan&#39;</span><span class="p">,</span> <span class="s1">&#39;Pakistan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Palau&#39;</span><span class="p">,</span> <span class="s1">&#39;Palau&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Palestine State&#39;</span><span class="p">,</span> <span class="s1">&#39;Palestine State&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Panama&#39;</span><span class="p">,</span> <span class="s1">&#39;Panama&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Papua New Guinea&#39;</span><span class="p">,</span> <span class="s1">&#39;Papua New Guinea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Paraguay&#39;</span><span class="p">,</span> <span class="s1">&#39;Paraguay&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Peru&#39;</span><span class="p">,</span> <span class="s1">&#39;Peru&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Philippines&#39;</span><span class="p">,</span> <span class="s1">&#39;Philippines&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Poland&#39;</span><span class="p">,</span> <span class="s1">&#39;Poland&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Portugal&#39;</span><span class="p">,</span> <span class="s1">&#39;Portugal&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Qatar&#39;</span><span class="p">,</span> <span class="s1">&#39;Qatar&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Romania&#39;</span><span class="p">,</span> <span class="s1">&#39;Romania&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Russia&#39;</span><span class="p">,</span> <span class="s1">&#39;Russia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Rwanda&#39;</span><span class="p">,</span> <span class="s1">&#39;Rwanda&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Saint Kitts and Nevis&#39;</span><span class="p">,</span> <span class="s1">&#39;Saint Kitts and Nevis&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Saint Lucia&#39;</span><span class="p">,</span> <span class="s1">&#39;Saint Lucia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Saint Vincent and the Grenadines&#39;</span><span class="p">,</span> <span class="s1">&#39;Saint Vincent and the Grenadines&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Samoa&#39;</span><span class="p">,</span> <span class="s1">&#39;Samoa&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;San Marino&#39;</span><span class="p">,</span> <span class="s1">&#39;San Marino&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sao Tome and Principe&#39;</span><span class="p">,</span> <span class="s1">&#39;Sao Tome and Principe&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Saudi Arabia&#39;</span><span class="p">,</span> <span class="s1">&#39;Saudi Arabia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Senegal&#39;</span><span class="p">,</span> <span class="s1">&#39;Senegal&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Serbia&#39;</span><span class="p">,</span> <span class="s1">&#39;Serbia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Seychelles&#39;</span><span class="p">,</span> <span class="s1">&#39;Seychelles&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sierra Leone&#39;</span><span class="p">,</span> <span class="s1">&#39;Sierra Leone&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Singapore&#39;</span><span class="p">,</span> <span class="s1">&#39;Singapore&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Slovakia&#39;</span><span class="p">,</span> <span class="s1">&#39;Slovakia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Slovenia&#39;</span><span class="p">,</span> <span class="s1">&#39;Slovenia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Solomon Islands&#39;</span><span class="p">,</span> <span class="s1">&#39;Solomon Islands&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Somalia&#39;</span><span class="p">,</span> <span class="s1">&#39;Somalia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;South Africa&#39;</span><span class="p">,</span> <span class="s1">&#39;South Africa&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;South Korea&#39;</span><span class="p">,</span> <span class="s1">&#39;South Korea&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;South Sudan&#39;</span><span class="p">,</span> <span class="s1">&#39;South Sudan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Spain&#39;</span><span class="p">,</span> <span class="s1">&#39;Spain&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sri Lanka&#39;</span><span class="p">,</span> <span class="s1">&#39;Sri Lanka&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sudan&#39;</span><span class="p">,</span> <span class="s1">&#39;Sudan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Suriname&#39;</span><span class="p">,</span> <span class="s1">&#39;Suriname&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Sweden&#39;</span><span class="p">,</span> <span class="s1">&#39;Sweden&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Switzerland&#39;</span><span class="p">,</span> <span class="s1">&#39;Switzerland&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Syria&#39;</span><span class="p">,</span> <span class="s1">&#39;Syria&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Tajikistan&#39;</span><span class="p">,</span> <span class="s1">&#39;Tajikistan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Tanzania&#39;</span><span class="p">,</span> <span class="s1">&#39;Tanzania&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Thailand&#39;</span><span class="p">,</span> <span class="s1">&#39;Thailand&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Timor-Leste&#39;</span><span class="p">,</span> <span class="s1">&#39;Timor-Leste&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Togo&#39;</span><span class="p">,</span> <span class="s1">&#39;Togo&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Tonga&#39;</span><span class="p">,</span> <span class="s1">&#39;Tonga&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Trinidad and Tobago&#39;</span><span class="p">,</span> <span class="s1">&#39;Trinidad and Tobago&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Tunisia&#39;</span><span class="p">,</span> <span class="s1">&#39;Tunisia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Turkey&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkey&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Turkmenistan&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkmenistan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Tuvalu&#39;</span><span class="p">,</span> <span class="s1">&#39;Tuvalu&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Uganda&#39;</span><span class="p">,</span> <span class="s1">&#39;Uganda&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Ukraine&#39;</span><span class="p">,</span> <span class="s1">&#39;Ukraine&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;United Arab Emirates&#39;</span><span class="p">,</span> <span class="s1">&#39;United Arab Emirates&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;United Kingdom&#39;</span><span class="p">,</span> <span class="s1">&#39;United Kingdom&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;United States of America&#39;</span><span class="p">,</span> <span class="s1">&#39;United States of America&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Uruguay&#39;</span><span class="p">,</span> <span class="s1">&#39;Uruguay&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Uzbekistan&#39;</span><span class="p">,</span> <span class="s1">&#39;Uzbekistan&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Vanuatu&#39;</span><span class="p">,</span> <span class="s1">&#39;Vanuatu&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Vatican City&#39;</span><span class="p">,</span> <span class="s1">&#39;Vatican City&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Venezuela&#39;</span><span class="p">,</span> <span class="s1">&#39;Venezuela&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Vietnam&#39;</span><span class="p">,</span> <span class="s1">&#39;Vietnam&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Yemen&#39;</span><span class="p">,</span> <span class="s1">&#39;Yemen&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Zambia&#39;</span><span class="p">,</span> <span class="s1">&#39;Zambia&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Zimbabwe&#39;</span><span class="p">,</span> <span class="s1">&#39;Zimbabwe&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<div class="viewcode-block" id="series">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.series">[docs]</a>
+<span class="k">class</span> <span class="nc">series</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s1">&#39;thumb/series/&#39;</span><span class="p">)</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">AGE_CHOICE</span><span class="p">)</span>
+    <span class="n">genre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Category</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;series_category&#39;</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rating</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">series_air_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">year_range</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">YEAR_RANGES</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">YEAR_CHOICE</span><span class="p">)</span>
+    <span class="n">country</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">COUNTRY_CHOICES</span><span class="p">)</span>
+    <span class="n">clicks</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">category</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">CATEGORY_CHOICE</span><span class="p">)</span>
+    <span class="n">watch_hours</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">is_series_new</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">premier</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">draft</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="series.get_series_images">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.series.get_series_images">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_series_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">movieapp.models</span> <span class="kn">import</span> <span class="n">photos</span>
+        <span class="k">return</span> <span class="n">photos</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">series_name</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+    
+<div class="viewcode-block" id="season">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.season">[docs]</a>
+<span class="k">class</span> <span class="nc">season</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">series_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;season_val&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">season_num</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">SEASON_NUMBER</span><span class="p">)</span>
+    <span class="n">heading</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">HEADING</span><span class="p">)</span>
+    <span class="n">collapse</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">COLLAPSE</span><span class="p">)</span>
+    
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">series_name</span><span class="si">}</span><span class="s1"> | Season </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">season_num</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="episode">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.episode">[docs]</a>
+<span class="k">class</span> <span class="nc">episode</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+    <span class="n">series_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;season_epi&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">season_val</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;episode&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>   
+    <span class="n">episode_num</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="n">video</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">sub_title_lang</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">srclang</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sub_title_file</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">sub_title_lang2</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">srclang2</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sub_title_file2</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">DURATION_RANGES</span><span class="p">)</span>
+    <span class="n">date_of_upload</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">season_val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="series_comment">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.series_comment">[docs]</a>
+<span class="k">class</span> <span class="nc">series_comment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="episode_comment">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.episode_comment">[docs]</a>
+<span class="k">class</span> <span class="nc">episode_comment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">episode</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">episode</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;series_comments&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">series_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="episode_review">
+<a class="viewcode-back" href="../../SeriesApp.html#SeriesApp.models.episode_review">[docs]</a>
+<span class="k">class</span> <span class="nc">episode_review</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">episode</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">episode</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;series_reviews&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">series_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_name</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Movie Website</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, The Proton Guy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

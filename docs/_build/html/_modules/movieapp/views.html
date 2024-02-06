@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>movieapp.views &#8212; Movie Website version 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=cf9c907b"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for movieapp.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">movie</span><span class="p">,</span> <span class="n">series</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">EmailMessage</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+
+<div class="viewcode-block" id="home">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.home">[docs]</a>
+<span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39; Returning movies, series, and anime</span>
+<span class="sd">    to the frontend&#39;&#39;&#39;</span>
+
+    <span class="c1"># filtering to get movies, series, and anime from database</span>
+    <span class="n">get_movies</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+    <span class="n">get_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_series_new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-series_air_date&#39;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+    <span class="n">get_anime</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;anime&#39;</span><span class="p">,</span> <span class="n">is_series_new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-series_air_date&#39;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+    <span class="n">get_anime_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;anime&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span>
+
+    <span class="c1">#getting movies and series set as premier</span>
+    <span class="n">get_premier</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">premier</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">get_premier_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">premier</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-series_air_date&#39;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="c1">#returning querysets to the frontend</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;movie&#39;</span><span class="p">:</span> <span class="n">get_movies</span><span class="p">,</span>
+        <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="n">get_series</span><span class="p">,</span>
+        <span class="s1">&#39;anime&#39;</span><span class="p">:</span> <span class="n">get_anime</span><span class="p">,</span>
+        <span class="s1">&#39;movie_anime&#39;</span><span class="p">:</span> <span class="n">get_anime_movie</span><span class="p">,</span>
+        <span class="s1">&#39;premier&#39;</span><span class="p">:</span> <span class="n">get_premier</span><span class="p">,</span>
+        <span class="s1">&#39;series_premier&#39;</span><span class="p">:</span> <span class="n">get_premier_series</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/index.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="pricing">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.pricing">[docs]</a>
+<span class="k">def</span> <span class="nf">pricing</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/pricing.html&#39;</span><span class="p">,</span> <span class="p">{})</span></div>
+
+
+<div class="viewcode-block" id="faq">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.faq">[docs]</a>
+<span class="k">def</span> <span class="nf">faq</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/faq.html&#39;</span><span class="p">,</span> <span class="p">{})</span></div>
+
+
+<div class="viewcode-block" id="about">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.about">[docs]</a>
+<span class="k">def</span> <span class="nf">about</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/about.html&#39;</span><span class="p">,</span> <span class="p">{})</span></div>
+
+
+<div class="viewcode-block" id="privacy">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.privacy">[docs]</a>
+<span class="k">def</span> <span class="nf">privacy</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/privacy.html&#39;</span><span class="p">,{})</span></div>
+
+
+<div class="viewcode-block" id="contacts">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.contacts">[docs]</a>
+<span class="k">def</span> <span class="nf">contacts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        The contact view collects</span>
+<span class="sd">        a users name, email, body,</span>
+<span class="sd">        and subject and sends it to the admin of the website </span>
+<span class="sd">        via email.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># retrieving user input after form submition</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span>
+        <span class="n">body</span>  <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span>
+
+
+        <span class="c1"># sending email with email message library</span>
+        <span class="n">email_message</span> <span class="o">=</span> <span class="n">EmailMessage</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;ProtonTv: </span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;From: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> Email: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> </span><span class="se">\n</span><span class="s1"> Body: </span><span class="si">{</span><span class="n">body</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">EMAIL_HOST_USER</span><span class="p">,</span>
+                <span class="p">[</span><span class="s1">&#39;theprotonguy@yahoo.com&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">email_message</span><span class="o">.</span><span class="n">fail_silently</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">email_message</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Thank you for contacting us. We will reply shortly&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/contacts.html&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/contacts.html&#39;</span><span class="p">,</span> <span class="p">{})</span></div>
+
+    
+
+<div class="viewcode-block" id="NotFound">
+<a class="viewcode-back" href="../../movieapp.html#movieapp.views.NotFound">[docs]</a>
+<span class="k">def</span> <span class="nf">NotFound</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/404.html&#39;</span><span class="p">,</span> <span class="p">{})</span></div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Movie Website</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, The Proton Guy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

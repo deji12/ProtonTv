@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoviePlayerApp.views &#8212; Movie Website version 1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=cf9c907b"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for MoviePlayerApp.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">movieapp.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AuthenticationApp.models</span> <span class="kn">import</span> <span class="n">Profile</span>
+<span class="kn">from</span> <span class="nn">StreamsApp.models</span> <span class="kn">import</span> <span class="n">Stream</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+
+<div class="viewcode-block" id="detail">
+<a class="viewcode-back" href="../../MoviePlayerApp.html#MoviePlayerApp.views.detail">[docs]</a>
+<span class="k">def</span> <span class="nf">detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This view is responsible for </span>
+<span class="sd">        displaying the detail page of a </span>
+<span class="sd">        movie as well as the contents of </span>
+<span class="sd">        that movie.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">get_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># check if user submits a comment or review</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span> <span class="c1"># check if user is logged in</span>
+            <span class="n">get_profile</span> <span class="o">=</span> <span class="n">Profile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+            <span class="n">review</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;review&#39;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rate&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">text</span><span class="p">:</span>  <span class="c1"># means user filled the comment form</span>
+                <span class="c1"># creating a new comment and saving it</span>
+                <span class="n">new_comment</span> <span class="o">=</span> <span class="n">comment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">new_comment</span><span class="o">.</span><span class="n">movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">new_comment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">comments</span> <span class="o">+=</span><span class="mi">1</span> <span class="c1"># incrementing the number of comments the user has on this website by 1</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">title</span><span class="p">:</span> <span class="c1"># means user filled review form</span>
+                <span class="c1"># creating a new review object and saving it</span>
+                <span class="n">new_review</span> <span class="o">=</span> <span class="n">reviewss</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">review</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+                <span class="n">new_review</span><span class="o">.</span><span class="n">movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">new_review</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">reviews</span> <span class="o">+=</span><span class="mi">1</span>  <span class="c1"># incrementing the number of reviews the user has on this website by 1</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># return an error prompting that user has to be logged in to comment or give a review</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Please signin to post a comment or review&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>    
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_movie</span><span class="o">.</span><span class="n">clicks</span> <span class="o">+=</span><span class="mi">1</span> <span class="c1"># increment the number of clicks by 1</span>
+        <span class="n">get_movie</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Here, we search for other movies that have similar</span>
+<span class="sd">        categories with the selected movie in detail page</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">get_movie</span><span class="o">.</span><span class="n">category</span> <span class="o">==</span> <span class="s1">&#39;anime&#39;</span><span class="p">:</span> <span class="c1"># check if movie category is anime</span>
+        <span class="c1"># filtering to get other anime&#39;s that have similar category</span>
+        <span class="n">filtered_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;anime&#39;</span><span class="p">,</span> <span class="n">genre__in</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">genre</span><span class="o">.</span><span class="n">all</span><span class="p">())</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="c1"># returning data</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;movie&#39;</span><span class="p">:</span> <span class="n">get_movie</span><span class="p">,</span>
+            <span class="s1">&#39;related_movies&#39;</span><span class="p">:</span> <span class="n">filtered_movie</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/details1.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># if movie is not anime</span>
+        <span class="c1"># filtering to get other movies that have similar category</span>
+        <span class="n">filtered_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="n">genre__in</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">genre</span><span class="o">.</span><span class="n">all</span><span class="p">())</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="c1">#returning context</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;movie&#39;</span><span class="p">:</span> <span class="n">get_movie</span><span class="p">,</span>
+            <span class="s1">&#39;related_movies&#39;</span><span class="p">:</span> <span class="n">filtered_movie</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/details1.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="MovieStreamDetail">
+<a class="viewcode-back" href="../../MoviePlayerApp.html#MoviePlayerApp.views.MovieStreamDetail">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">MovieStreamDetail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stream_id</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This view is responsible for </span>
+<span class="sd">        displaying the detail page of a </span>
+<span class="sd">        movie as well as the contents of </span>
+<span class="sd">        that movie for watch parties.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">stream_object</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">stream_object</span> <span class="o">=</span> <span class="n">Stream</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Stream</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Watch party with id: &#39;</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;watch-party&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+
+    <span class="n">get_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># check if user submits a comment or review</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span> <span class="c1"># check if user is logged in</span>
+            <span class="n">get_profile</span> <span class="o">=</span> <span class="n">Profile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+            <span class="n">review</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;review&#39;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rate&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">text</span><span class="p">:</span>  <span class="c1"># means user filled the comment form</span>
+                <span class="c1"># creating a new comment and saving it</span>
+                <span class="n">new_comment</span> <span class="o">=</span> <span class="n">comment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">new_comment</span><span class="o">.</span><span class="n">movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">new_comment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">comments</span> <span class="o">+=</span><span class="mi">1</span> <span class="c1"># incrementing the number of comments the user has on this website by 1</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">title</span><span class="p">:</span> <span class="c1"># means user filled review form</span>
+                <span class="c1"># creating a new review object and saving it</span>
+                <span class="n">new_review</span> <span class="o">=</span> <span class="n">reviewss</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">review</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+                <span class="n">new_review</span><span class="o">.</span><span class="n">movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">reviews</span> <span class="o">+=</span><span class="mi">1</span>  <span class="c1"># incrementing the number of reviews the user has on this website by 1</span>
+                <span class="n">get_profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">new_review</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># return an error prompting that user has to be logged in to comment or give a review</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Please signin to post a comment or review&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>    
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_movie</span><span class="o">.</span><span class="n">clicks</span> <span class="o">+=</span><span class="mi">1</span> <span class="c1"># increment the number of clicks by 1</span>
+        <span class="n">get_movie</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Here, we search for other movies that have similar</span>
+<span class="sd">        categories with the selected movie in detail page</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">get_movie</span><span class="o">.</span><span class="n">category</span> <span class="o">==</span> <span class="s1">&#39;anime&#39;</span><span class="p">:</span> <span class="c1"># check if movie category is anime</span>
+        <span class="c1"># filtering to get other anime&#39;s that have similar category</span>
+        <span class="n">filtered_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;anime&#39;</span><span class="p">,</span> <span class="n">genre__in</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">genre</span><span class="o">.</span><span class="n">all</span><span class="p">())</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="c1"># returning data</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;movie&#39;</span><span class="p">:</span> <span class="n">get_movie</span><span class="p">,</span>
+            <span class="s1">&#39;related_movies&#39;</span><span class="p">:</span> <span class="n">filtered_movie</span><span class="p">,</span>
+            <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">stream_object</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;movieapp/detail.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># if movie is not anime</span>
+        <span class="c1"># filtering to get other movies that have similar category</span>
+        <span class="n">filtered_movie</span> <span class="o">=</span> <span class="n">movie</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="n">genre__in</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">genre</span><span class="o">.</span><span class="n">all</span><span class="p">())</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">get_movie</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-date_added&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="c1">#returning context</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;movie&#39;</span><span class="p">:</span> <span class="n">get_movie</span><span class="p">,</span>
+            <span class="s1">&#39;related_movies&#39;</span><span class="p">:</span> <span class="n">filtered_movie</span><span class="p">,</span>
+            <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">stream_object</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;StreamsApp/detail.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Movie Website</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, The Proton Guy.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
