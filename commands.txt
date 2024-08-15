@@ -1,0 +1,19 @@
+brew services start rabbitmq  -> start rebbitmq
+celery -A movie worker -l info -> starting celery
+celery flower -A movie --port=5555 -> run flower -> url http://localhost:5555/
+celery -A movie beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler -> run scheduled tasks in db
+celery -A movie beat -l INFO -> run scheduled task in settings file
+
+first api:
+name
+video
+imdb_id
+
+second api:
+year
+duration
+info
+country
+thumbnail
+rating
+genre

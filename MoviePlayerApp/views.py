@@ -5,7 +5,7 @@ from AuthenticationApp.models import Profile
 from StreamsApp.models import Stream
 from django.contrib.auth.decorators import login_required
 
-def detail(request, name):
+def detail(request, slug):
 
     '''
         This view is responsible for 
@@ -14,7 +14,7 @@ def detail(request, name):
         that movie.
     '''
 
-    get_movie = movie.objects.get(name=name)
+    get_movie = movie.objects.get(slug=slug)
 
     # check if user submits a comment or review
     if request.method == 'POST':
@@ -29,26 +29,26 @@ def detail(request, name):
             if text:  # means user filled the comment form
                 # creating a new comment and saving it
                 new_comment = comment(name=request.user, body=text)
-                new_comment.movie = movie.objects.get(name=name)
+                new_comment.movie = get_movie
                 new_comment.save()
                 
                 get_profile.comments +=1 # incrementing the number of comments the user has on this website by 1
                 get_profile.save()
 
-                return redirect('detail', name=name)
+                return redirect('detail', slug=slug)
             if title: # means user filled review form
                 # creating a new review object and saving it
                 new_review = reviewss(name=request.user, title=title, body=review, rate=rate)
-                new_review.movie = movie.objects.get(name=name)
+                new_review.movie = get_movie
                 new_review.save()
 
                 get_profile.reviews +=1  # incrementing the number of reviews the user has on this website by 1
                 get_profile.save()
 
-                return redirect('detail', name=name)
+                return redirect('detail', slug=slug)
         else:  # return an error prompting that user has to be logged in to comment or give a review
             messages.error(request, 'Please signin to post a comment or review')
-            return redirect('detail', name=name)    
+            return redirect('detail', slug=slug)    
 
     else:
         get_movie.clicks +=1 # increment the number of clicks by 1

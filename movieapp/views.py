@@ -10,10 +10,10 @@ def home(request):
     to the frontend'''
 
     # filtering to get movies, series, and anime from database
-    get_movies = movie.objects.filter(new=True).order_by('-date_added')[:20]
-    get_series = series.objects.filter(is_series_new=True).order_by('-series_air_date')[:20]
-    get_anime = series.objects.filter(category='anime', is_series_new=True).order_by('-series_air_date')[:20]
-    get_anime_movie = movie.objects.filter(category='anime', new=True).order_by('-date_added')[:20]
+    get_movies = movie.objects.filter(new=True).order_by('-date_added')[:64]
+    get_series = series.objects.filter(is_series_new=True, draft=False, premier=False).order_by('-series_air_date')[:34]
+    get_anime = series.objects.filter(category='anime', is_series_new=True, draft=False, premier=False).order_by('-series_air_date')[:34]
+    get_anime_movie = movie.objects.filter(category='anime', new=True).order_by('-date_added')[:34]
 
     #getting movies and series set as premier
     get_premier = movie.objects.filter(premier=True).order_by('-date_added')[:3]

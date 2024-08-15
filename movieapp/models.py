@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from SeriesApp.models import series
 from Globals.models import *
 import datetime
+from django.utils.text import slugify
 
 CATEGORY_CHOICE = [
     ("movie", "movie"),
@@ -18,13 +19,8 @@ YEAR_RANGES = [
     (f"{start}-{end}", f"{start}-{end}") for start, end in zip(range(1950, current_year + 1, 5), range(1955, (current_year + 4), 5))
 ]
 
-# Adjust the last entry to cover the remaining years
-# if current_year % 5 != 0:
-#     last_range = (f"{current_year - (current_year % 5)}-{current_year}", f"{current_year - (current_year % 5)}-{current_year}")
-#     YEAR_RANGES.append(last_range)
-
 DURATION_RANGES = [
-    (f"{start + 10} minutes", f"{start + 10} minutes") for start in range(10, 301, 10)
+    (f"{start + 10} min", f"{start + 10} min") for start in range(10, 301, 10)
 ]
 
 COUNTRY_CHOICES = [
@@ -226,8 +222,11 @@ COUNTRY_CHOICES = [
 
 class movie(models.Model):
     name = models.CharField(max_length=20000)
+    slug = models.SlugField( null=True, blank=True)
     info = models.TextField()
     video = models.CharField(max_length=10000, null=True, blank=True)
+
+    imdb_id = models.CharField(max_length=100, null=True, blank=True)
 
     sub_title_language = models.CharField(max_length=225, null=True, blank=True)
     srclanguage = models.CharField(max_length=225, blank=True, null=True)
@@ -238,14 +237,17 @@ class movie(models.Model):
     sub_title_file2 = models.CharField(max_length=1000, null=True, blank=True)
 
     thumbnail = models.FileField(upload_to='thumb/')
-    age = models.CharField(default=13, max_length=20, choices=AGE_CHOICE)
+    thumbnail_url = models.URLField(null=True, blank=True)
+    rated = models.CharField(default=13, max_length=20, choices=AGE_CHOICE)
     category = models.CharField(choices=CATEGORY_CHOICE, max_length=200)
+
     genre = models.ManyToManyField(Category, related_name='category', null=True, blank=True)
+
     rating = models.CharField(max_length=100)
     year = models.CharField(max_length=100, choices=YEAR_CHOICE)
     year_range = models.CharField(max_length=200, null=True, blank=True, choices=[("", "Select Year Range")] + YEAR_RANGES)
-    duration = models.CharField(max_length=100, choices=DURATION_RANGES)
-    country = models.CharField(max_length=200, choices=COUNTRY_CHOICES)
+    duration = models.CharField(max_length=100, choices=DURATION_RANGES, null=True, blank=True)
+    country =  models.ManyToManyField(Country, related_name='country', null=True, blank=True)
     date_added = models.DateField(auto_now_add=True, null=True, blank=True)
     clicks = models.IntegerField(null=True, blank=True, default=0)
     watch_hours = models.FloatField(default=0.0)
@@ -267,6 +269,22 @@ class movie(models.Model):
     def return_movie_pictures(self):
 
         return photos.objects.filter(movie_name=self)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        
+        # Check if the slug already exists
+        if movie.objects.filter(slug=self.slug).exclude(id=self.id).exists():
+            # Append a number to make the slug unique
+            base_slug = self.slug
+            counter = 1
+            while movie.objects.filter(slug=self.slug).exclude(id=self.id).exists():
+                self.slug = f"{base_slug}-{counter}"
+                counter += 1
+
+        super().save(*args, **kwargs)
+
 
 class comment(models.Model):
     movie = models.ForeignKey(movie, related_name='movie_comment', on_delete=models.CASCADE)

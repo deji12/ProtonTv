@@ -1,15 +1,26 @@
 from django.test import TestCase
 
-# Create your tests here.
 import requests
-import json
+# from .models import movie
 
-# url = 'https://movie.vandit.cf/home?suggest=shows'
-# response = requests.get(
-#     url
-# )
-# print(response._content)
+MOVIE_ENDPOINT = 'https://vidsrc.to/vapi/movie'
+TYPE_PARAM = 'new'
+page_param = 1
 
-test = 'season: Never Have I Ever | Season 1'
-split_season = test.split("|")[1]
-print(split_season.split(" ")[2])
+def get_movies():
+
+
+    api_url = f'{MOVIE_ENDPOINT}/{TYPE_PARAM}/{page_param if page_param else ""}'
+
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  
+        data = response.json()
+        print(data['result']['items'])
+    except requests.exceptions.RequestException as e:
+        print('There was a problem with the request:', e)
+
+test = {
+    "year": "2021-"
+}
+print(test["year"].strip('-'))

@@ -3,6 +3,11 @@ from . import models
 from import_export.admin import ImportExportModelAdmin
 from .models import SiteInformation
 
+class CountryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ['name']
+
+admin.site.register(models.Country, CountryAdmin)
+
 class CategoryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['cat']
 

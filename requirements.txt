@@ -5,6 +5,7 @@ autobahn==23.6.2
 Automat==22.10.0
 Babel==2.14.0
 certifi==2023.5.7
+celery
 cffi==1.16.0
 channels==4.0.0
 charset-normalizer==2.0.12
@@ -17,6 +18,7 @@ diff-match-patch==20230430
 dj-database-url==2.0.0
 Django==4.2.1
 django-channels==0.7.0
+django_celery_beat
 django-cloudinary-storage==0.3.0
 django-import-export==3.3.3
 django-jazzmin==2.6.0
@@ -24,6 +26,7 @@ djangorestframework==3.14.0
 docutils==0.20.1
 environ==1.0
 et-xmlfile==1.1.0
+gevent
 gunicorn==21.2.0
 hyperlink==21.0.0
 idna==3.4

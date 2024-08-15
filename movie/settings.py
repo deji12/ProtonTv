@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import cloudinary_storage
+from .celery import app
 
 # import environ
 
@@ -40,8 +41,8 @@ ALLOWED_HOSTS = ['*']
 SITE_ID = 1 
 
 INSTALLED_APPS = [
-    'channels',
     'daphne',
+    'channels',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.sites',
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'Globals',
     'import_export',
     'StreamsApp',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +106,12 @@ WSGI_APPLICATION = 'movie.wsgi.application'
 ASGI_APPLICATION = "movie.asgi.application"
 
 CHANNEL_LAYERS = {
+    # "default": {
+    #     "BACKEND": "channels_redis.core.RedisChannelLayer",
+    #     "CONFIG": {
+    #         "hosts": [("127.0.0.1", 6379)],
+    #     },
+    # },
     "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
 }
 
