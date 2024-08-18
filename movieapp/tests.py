@@ -20,7 +20,6 @@ def get_movies():
     except requests.exceptions.RequestException as e:
         print('There was a problem with the request:', e)
 
-test = {
-    "year": "2021-"
-}
-print(test["year"].strip('-'))
+test = '2021-'
+if '-' in test:
+    print('yes')
